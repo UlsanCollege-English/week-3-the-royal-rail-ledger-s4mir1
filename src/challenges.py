@@ -1,64 +1,26 @@
-"""Week 3 homework: The Royal Rail Ledger.
-
-Implement the required functions below.
-Use stdlib only.
-"""
-
-from __future__ import annotations
-
-
-class SLLNode:
-    """Node for a singly linked list."""
-
-    def __init__(self, value: int, next: "SLLNode | None" = None) -> None:
-        self.value = value
-        self.next = next
-
-
-class SinglyLinkedList:
-    """Simple singly linked list with a head reference."""
-
-    def __init__(self) -> None:
-        self.head: SLLNode | None = None
-
-
-class DLLNode:
-    """Node for a doubly linked list."""
-
-    def __init__(
-        self,
-        value: int,
-        prev: "DLLNode | None" = None,
-        next: "DLLNode | None" = None,
-    ) -> None:
-        self.value = value
-        self.prev = prev
-        self.next = next
-
-
-class DoublyLinkedList:
-    """Simple doubly linked list with head and tail references."""
-
-    def __init__(self) -> None:
-        self.head: DLLNode | None = None
-        self.tail: DLLNode | None = None
-
-
 def build_sll_from_list(values: list[int]) -> SinglyLinkedList:
-    """Build and return a singly linked list from a Python list.
+    """Build and return a singly linked list from a Python list."""
+    sll = SinglyLinkedList()
+    if not values:
+        return sll
 
-    Examples:
-        >>> sll_to_list(build_sll_from_list([]))
-        []
-        >>> sll_to_list(build_sll_from_list([4, 7, 9]))
-        [4, 7, 9]
-    """
-    raise NotImplementedError
+    sll.head = SLLNode(values[0])
+    current = sll.head
+    for v in values[1:]:
+        current.next = SLLNode(v)
+        current = current.next
+
+    return sll
 
 
 def sll_to_list(sll: SinglyLinkedList) -> list[int]:
     """Return all values from a singly linked list as a Python list."""
-    raise NotImplementedError
+    result: list[int] = []
+    current = sll.head
+    while current is not None:
+        result.append(current.value)
+        current = current.next
+    return result
 
 
 def find_first_repeat_sll(sll: SinglyLinkedList) -> int | None:
@@ -66,7 +28,14 @@ def find_first_repeat_sll(sll: SinglyLinkedList) -> int | None:
 
     Return None if no value repeats.
     """
-    raise NotImplementedError
+    seen: set[int] = set()
+    current = sll.head
+    while current is not None:
+        if current.value in seen:
+            return current.value
+        seen.add(current.value)
+        current = current.next
+    return None
 
 
 def remove_all_from_dll(dll: DoublyLinkedList, target: int) -> None:
@@ -75,9 +44,37 @@ def remove_all_from_dll(dll: DoublyLinkedList, target: int) -> None:
     Update dll.head and dll.tail correctly.
     Return None.
     """
-    raise NotImplementedError
+    current = dll.head
+    while current is not None:
+        nxt = current.next
+
+        if current.value == target:
+            # Update previous link
+            if current.prev is not None:
+                current.prev.next = current.next
+            else:
+                dll.head = current.next
+
+            # Update next link
+            if current.next is not None:
+                current.next.prev = current.prev
+            else:
+                dll.tail = current.prev
+
+        current = nxt
 
 
 def is_train_palindrome(dll: DoublyLinkedList) -> bool:
     """Stretch: return True if the DLL reads the same forward and backward."""
-    raise NotImplementedError
+    left = dll.head
+    right = dll.tail
+
+    while left is not None and right is not None:
+        if left.value != right.value:
+            return False
+        if left == right or left.next == right:
+            break
+        left = left.next
+        right = right.prev
+
+    return True
